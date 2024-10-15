@@ -1,17 +1,25 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import Collection, Recipe, User
+import json
 
 # Create your views here.
 
 def get_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
-    print("successfully")
     return JsonResponse(collection_to_dict(collection))
 
 
+@csrf_exempt
 def create_collection(request):
-    data = request.POST
+    if request.method != 'POST':
+        return HttpResponseBadRequest("Only POST requests are allowed")
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+    
     author = get_object_or_404(User, username=data['author'])
     collection = Collection.objects.create(
         id=data['id'],
@@ -20,7 +28,10 @@ def create_collection(request):
         description=data['description'],
         labels=data.get('labels', [])
     )
+    print(collection)
     return JsonResponse(collection_to_dict(collection))
+
+
 
 
 def delete_collection(request, id):
@@ -29,8 +40,6 @@ def delete_collection(request, id):
     # Trigger event
     trigger_event('collection_deleted', collection)
     return JsonResponse({'status': 'deleted'})
-
-
 
 
 
