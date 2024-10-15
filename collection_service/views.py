@@ -6,6 +6,7 @@ from .models import Collection, Recipe, User
 
 def get_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
+    print("successfully")
     return JsonResponse(collection_to_dict(collection))
 
 
@@ -20,7 +21,6 @@ def create_collection(request):
         labels=data.get('labels', [])
     )
     return JsonResponse(collection_to_dict(collection))
-
 
 
 def delete_collection(request, id):
