@@ -28,7 +28,12 @@ def create_collection(request):
         description=data['description'],
         labels=data.get('labels', [])
     )
-    print(collection)
+    
+    recipes = data.get('recipes', [])
+    for recipe_id in recipes:
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        collection.recipes.add(recipe)
+     
     return JsonResponse(collection_to_dict(collection))
 
 
