@@ -11,7 +11,7 @@ def get_collection(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
-@csrf_exempt
+#@csrf_exempt
 def create_collection(request):
     if request.method != 'POST':
         return HttpResponseBadRequest("Only POST requests are allowed")
@@ -37,13 +37,12 @@ def create_collection(request):
     return JsonResponse(collection_to_dict(collection))
 
 
-
-
 def delete_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
+    deleted_id = collection.id
     collection.delete()
     # Trigger event
-    trigger_event('collection_deleted', collection)
+    trigger_event('deleted', deleted_id)
     return JsonResponse({'status': 'deleted'})
 
 
@@ -59,6 +58,6 @@ def collection_to_dict(collection):
         'labels': collection.labels
     }
     
-def trigger_event(event_type, collection):
+def trigger_event(event_type, collection_id):
     # Implement event logic here
-    print(f"Event triggered: {event_type} for collection {collection.id}")
+    print(f"Event triggered: collection {collection_id} was {event_type}")
