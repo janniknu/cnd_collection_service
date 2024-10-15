@@ -11,7 +11,11 @@ def get_collection(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
-#@csrf_exempt
+def get_collections(request):
+    collections = Collection.objects.all()
+    return JsonResponse([collection_to_dict(c) for c in collections], safe=False)
+
+
 def create_collection(request):
     if request.method != 'POST':
         return HttpResponseBadRequest("Only POST requests are allowed")
@@ -34,6 +38,8 @@ def create_collection(request):
         recipe = get_object_or_404(Recipe, id=recipe_id)
         collection.recipes.add(recipe)
      
+    # Trigger event
+    trigger_event('created', collection.id)
     return JsonResponse(collection_to_dict(collection))
 
 
@@ -46,6 +52,58 @@ def delete_collection(request, id):
     return JsonResponse({'status': 'deleted'})
 
 
+def update_collection(request, id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest("Only POST requests are allowed")
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+    
+    collection = get_object_or_404(Collection, id=id)
+    collection.name = data['name']
+    collection.description = data['description']
+    collection.labels = data.get('labels', [])
+    collection.recipes.clear()
+    recipes = data.get('recipes', [])
+    for recipe_id in recipes:
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        collection.recipes.add(recipe)
+    
+    collection.save()
+    # Trigger event
+    trigger_event('updated', collection.id)
+    return JsonResponse(collection_to_dict(collection))
+
+
+def add_recipe(request, id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest("Only POST requests are allowed")
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+    
+    recipe_id = data.get('recipe_id')
+    collection = get_object_or_404(Collection, id=id)
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    collection.recipes.add(recipe)
+    return JsonResponse(collection_to_dict(collection))
+
+
+def remove_recipe(request, id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest("Only POST requests are allowed")
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+    
+    recipe_id = data.get('recipe_id')
+    collection = get_object_or_404(Collection, id=id)
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    collection.recipes.remove(recipe)
+    return JsonResponse(collection_to_dict(collection))
 
 
 def collection_to_dict(collection):

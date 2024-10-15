@@ -20,11 +20,11 @@ from collection_service import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('collections/', views.get_collections, name='get_collections'),
+    path('collections/', views.get_collections, name='get_collections'),
     path('collections/create/', views.create_collection, name='create_collection'),
     path('collections/<str:id>/', views.get_collection, name='get_collection'), 
-    #path('collections/<str:id>/update/', views.update_collection, name='update_collection'),
+    path('collections/<str:id>/update/', views.update_collection, name='update_collection'),
     path('collections/<str:id>/delete/', views.delete_collection, name='delete_collection'),
-    #path('collections/<str:id>/add_recipe/', views.add_recipe, name='add_recipe'),
-    #path('collections/<str:id>/remove_recipe/', views.remove_recipe, name='remove_recipe'),
+    path('collections/<str:id>/add_recipe/', views.add_recipe, name='add_recipe'),
+    path('collections/<str:id>/remove_recipe/', views.remove_recipe, name='remove_recipe'),
 ]
