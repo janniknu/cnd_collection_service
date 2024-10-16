@@ -16,6 +16,7 @@ def get_collections(request):
     return JsonResponse([collection_to_dict(c) for c in collections], safe=False)
 
 
+@csrf_exempt
 def create_collection(request):
     if request.method != 'POST':
         return HttpResponseBadRequest("Only POST requests are allowed")
@@ -52,6 +53,7 @@ def delete_collection(request, id):
     return JsonResponse({'status': 'deleted'})
 
 
+@csrf_exempt
 def update_collection(request, id):
     if request.method != 'POST':
         return HttpResponseBadRequest("Only POST requests are allowed")
@@ -76,6 +78,7 @@ def update_collection(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
+@csrf_exempt
 def add_recipe(request, id):
     if request.method != 'POST':
         return HttpResponseBadRequest("Only POST requests are allowed")
@@ -91,6 +94,7 @@ def add_recipe(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
+@csrf_exempt
 def remove_recipe(request, id):
     if request.method != 'POST':
         return HttpResponseBadRequest("Only POST requests are allowed")
