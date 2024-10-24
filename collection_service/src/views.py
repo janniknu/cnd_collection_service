@@ -2,17 +2,19 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Collection, Recipe, User
-from .eventProducer import publish
+from .rabbitmq_service import publishEvent
 import json
 
 # Create your views here.
 
+#def collection_main(request):
 def get_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
-    publish('get')
+    publishEvent('get')
     return JsonResponse(collection_to_dict(collection))
 
 
+#ist das korrekt so? Alle oder nur ausgewählte?
 def get_collections(request):
     collections = Collection.objects.all()
     return JsonResponse([collection_to_dict(c) for c in collections], safe=False)
@@ -54,7 +56,7 @@ def delete_collection(request, id):
     trigger_event('deleted', deleted_id)
     return JsonResponse({'status': 'deleted'})
 
-
+#author update zulassen? Aktuell wird der username des updaters reingenommen
 @csrf_exempt
 def update_collection(request, id):
     if request.method != 'POST':
