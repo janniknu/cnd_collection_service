@@ -2,12 +2,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Collection, Recipe, User
+from .eventProducer import publish
 import json
 
 # Create your views here.
 
 def get_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
+    publish('get')
     return JsonResponse(collection_to_dict(collection))
 
 
