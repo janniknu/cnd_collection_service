@@ -22,6 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('collections/', views.collection_main),
     path('collections/<int:id>/', views.collection_main),
-    path('collections/<str:id>/add_recipe/', views.add_recipe, name='add_recipe'),
-    path('collections/<str:id>/remove_recipe/', views.remove_recipe, name='remove_recipe'),
+    path('collections/<str:id>/recipe/', views.edit_recipe),
 ]

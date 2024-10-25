@@ -24,6 +24,16 @@ def collection_main(request, id=None):
         return HttpResponseBadRequest("Invalid request method")
     
 
+@csrf_exempt 
+def edit_recipe(request, id):
+    if request.method == 'POST':
+        return add_recipe(request, id)
+    elif request.method == 'DELETE':
+        return remove_recipe(request, id)
+    else:
+        return HttpResponseBadRequest("Invalid request method")
+    
+
 def get_collection(id):
     collection = get_object_or_404(Collection, id=id)
     return JsonResponse(collection_to_dict(collection))
@@ -101,10 +111,7 @@ def update_collection(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
-@csrf_exempt
 def add_recipe(request, id):
-    if request.method != 'POST':
-        return HttpResponseBadRequest("Only POST requests are allowed")
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
@@ -117,10 +124,7 @@ def add_recipe(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
-@csrf_exempt
 def remove_recipe(request, id):
-    if request.method != 'POST':
-        return HttpResponseBadRequest("Only POST requests are allowed")
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
