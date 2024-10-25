@@ -7,35 +7,45 @@ import json
 
 # Create your views here.
 
-#def collection_main(request):
-def get_collection(request, id):
+@csrf_exempt
+def collection_main(request, id=None):
+    if request.method == 'GET':
+        if id:
+            return get_collection(id)
+        else:
+            return get_collections()
+    elif request.method == 'POST':
+        return create_collection(request)
+    elif request.method == 'PUT':
+        return update_collection(request, id)
+    elif request.method == 'DELETE':
+        return delete_collection(request,id)
+    else:
+        return HttpResponseBadRequest("Invalid request method")
+    
+
+def get_collection(id):
     collection = get_object_or_404(Collection, id=id)
-    publishEvent('get')
     return JsonResponse(collection_to_dict(collection))
 
 
-#ist das korrekt so? Alle oder nur ausgewählte?
-def get_collections(request):
+def get_collections():
     collections = Collection.objects.all()
     return JsonResponse([collection_to_dict(c) for c in collections], safe=False)
 
 
-@csrf_exempt
 def create_collection(request):
-    if request.method != 'POST':
-        return HttpResponseBadRequest("Only POST requests are allowed")
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return HttpResponseBadRequest("Invalid JSON")
     
     author = get_object_or_404(User, username=data['author'])
+    #collection = 
     collection = Collection.objects.create(
-        id=data['id'],
         name=data['name'],
         author=author,
-        description=data['description'],
-        labels=data.get('labels', [])
+        description=data['description']
     )
     
     recipes = data.get('recipes', [])
@@ -44,32 +54,41 @@ def create_collection(request):
         collection.recipes.add(recipe)
      
     # Trigger event
-    trigger_event('created', collection.id)
+    publishEvent('collection created', collection_to_dict(collection))
     return JsonResponse(collection_to_dict(collection))
 
 
 def delete_collection(request, id):
-    collection = get_object_or_404(Collection, id=id)
-    deleted_id = collection.id
-    collection.delete()
-    # Trigger event
-    trigger_event('deleted', deleted_id)
-    return JsonResponse({'status': 'deleted'})
-
-#author update zulassen? Aktuell wird der username des updaters reingenommen
-@csrf_exempt
-def update_collection(request, id):
-    if request.method != 'POST':
-        return HttpResponseBadRequest("Only POST requests are allowed")
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return HttpResponseBadRequest("Invalid JSON")
     
     collection = get_object_or_404(Collection, id=id)
+    author = get_object_or_404(User, username=data['author'])   
+    if author != collection.author:
+        return HttpResponseBadRequest("You are not authorized to delete this collection")
+    
+    # Trigger event
+    publishEvent('collection deleted', collection_to_dict(collection))
+    collection.delete()
+    return JsonResponse({'status': 'deleted'})
+
+
+
+def update_collection(request, id):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+    
+    collection = get_object_or_404(Collection, id=id)
+    author = get_object_or_404(User, username=data['author'])   
+    if author != collection.author:
+        return HttpResponseBadRequest("You are not authorized to update this collection")
+    
     collection.name = data['name']
     collection.description = data['description']
-    collection.labels = data.get('labels', [])
     collection.recipes.clear()
     recipes = data.get('recipes', [])
     for recipe_id in recipes:
@@ -78,7 +97,7 @@ def update_collection(request, id):
     
     collection.save()
     # Trigger event
-    trigger_event('updated', collection.id)
+    publishEvent('collection updated', collection_to_dict(collection))
     return JsonResponse(collection_to_dict(collection))
 
 
@@ -120,10 +139,6 @@ def collection_to_dict(collection):
         'name': collection.name,
         'author': collection.author.username,
         'description': collection.description,
-        'recipes': [recipe.id for recipe in collection.recipes.all()],
-        'labels': collection.labels
+        'recipes': [recipe.id for recipe in collection.recipes.all()]
     }
     
-def trigger_event(event_type, collection_id):
-    # Implement event logic here
-    print(f"Event triggered: collection {collection_id} was {event_type}")
