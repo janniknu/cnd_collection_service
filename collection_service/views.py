@@ -49,9 +49,8 @@ def create_collection(request):
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return HttpResponseBadRequest("Invalid JSON")
-    
     author = get_object_or_404(User, username=data['author'])
-    #collection = 
+    
     collection = Collection.objects.create(
         name=data['name'],
         author=author,
@@ -64,7 +63,7 @@ def create_collection(request):
         collection.recipes.add(recipe)
      
     # Trigger event
-    publishEvent('collection created', collection_to_dict(collection))
+    publishEvent('collection.created', collection_to_dict(collection))
     return JsonResponse(collection_to_dict(collection))
 
 
@@ -80,7 +79,7 @@ def delete_collection(request, id):
         return HttpResponseBadRequest("You are not authorized to delete this collection")
     
     # Trigger event
-    publishEvent('collection deleted', collection_to_dict(collection))
+    publishEvent('collection.deleted', collection_to_dict(collection))
     collection.delete()
     return JsonResponse({'status': 'deleted'})
 
@@ -107,7 +106,7 @@ def update_collection(request, id):
     
     collection.save()
     # Trigger event
-    publishEvent('collection updated', collection_to_dict(collection))
+    publishEvent('collection.updated', collection_to_dict(collection))
     return JsonResponse(collection_to_dict(collection))
 
 
