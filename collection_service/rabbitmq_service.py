@@ -1,7 +1,18 @@
 import pika, json
+import os
 
-params = pika.URLParameters('amqp://guest:guest@localhost:5672/')
+rabbitmq_user = os.getenv('RABBITMQ_USER')
+rabbitmq_password = os.getenv('RABBITMQ_PASSWORD')
+rabbitmq_host = os.getenv('RABBITMQ_HOST')
+
+credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
+params = pika.ConnectionParameters(host=rabbitmq_host, credentials=credentials)
+
 connection = pika.BlockingConnection(params)
+#params = pika.URLParameters('amqp://guest:guest@localhost:5672/')
+#connection = pika.BlockingConnection(params)
+
+
 exchange = 'collection_service_exchange'
 channel = connection.channel()
 
