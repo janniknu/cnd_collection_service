@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Collection, Recipe, User
 from .rabbitmq_service import publishEvent
@@ -76,7 +76,7 @@ def delete_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
     author = get_object_or_404(User, username=data['author'])   
     if author != collection.author:
-        return HttpResponseBadRequest("You are not authorized to delete this collection")
+        return HttpResponseForbidden("You are not authorized to delete this collection")
     
     # Trigger event
     publishEvent('collection.deleted', collection_to_dict(collection))
@@ -94,7 +94,7 @@ def update_collection(request, id):
     collection = get_object_or_404(Collection, id=id)
     author = get_object_or_404(User, username=data['author'])   
     if author != collection.author:
-        return HttpResponseBadRequest("You are not authorized to update this collection")
+        return HttpResponseForbidden("You are not authorized to update this collection")
     
     collection.name = data['name']
     collection.description = data['description']

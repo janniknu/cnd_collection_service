@@ -20,7 +20,7 @@ from collection_service import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('collections/', views.collection_main),
-    path('collections/<int:id>/', views.collection_main),
-    path('collections/<str:id>/recipe/', views.edit_recipe),
+    path('collections/', views.collection_main, name='collection_main'),
+    path('collections/<int:id>/', views.collection_main, name='collection_main'),
+    path('collections/<str:id>/recipe/', views.edit_recipe, name='edit_recipe'),
 ]
