@@ -1,5 +1,6 @@
 import pika, json
 import os
+from apps.notification_service.views import create_notification
 
 rabbitmq_user = os.getenv('RABBITMQ_USER')
 rabbitmq_password = os.getenv('RABBITMQ_PASSWORD')
@@ -30,3 +31,14 @@ channel.queue_bind(exchange=exchange,queue='collection.deleted',routing_key='col
 
 def publishEvent(method, body):
         channel.basic_publish(exchange=exchange, routing_key=method, body=json.dumps(body))
+        
+        
+
+def callback(ch, method, properties, body):
+        print(f" [x] Received {body}", flush=True)
+        create_notification(ch, method, properties, body)
+      
+#channel.basic_consume(queue='collection.updated', on_message_callback=callback, auto_ack=True)
+#channel.start_consuming()
+    
+                    
