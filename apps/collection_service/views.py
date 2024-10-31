@@ -25,11 +25,11 @@ def collection_main(request, id=None):
     
 
 @csrf_exempt 
-def edit_recipe(request, id):
+def collection_edit_recipe(request, id):
     if request.method == 'POST':
-        return add_recipe(request, id)
+        return collection_add_recipe(request, id)
     elif request.method == 'DELETE':
-        return remove_recipe(request, id)
+        return collection_remove_recipe(request, id)
     else:
         return HttpResponseBadRequest("Invalid request method")
     
@@ -110,7 +110,7 @@ def update_collection(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
-def add_recipe(request, id):
+def collection_add_recipe(request, id):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
@@ -123,7 +123,7 @@ def add_recipe(request, id):
     return JsonResponse(collection_to_dict(collection))
 
 
-def remove_recipe(request, id):
+def collection_remove_recipe(request, id):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:

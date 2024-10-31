@@ -29,7 +29,4 @@ channel.queue_bind(exchange=exchange,queue='collection.updated',routing_key='col
 channel.queue_bind(exchange=exchange,queue='collection.deleted',routing_key='collection.deleted')
 
 def publishEvent(method, body):
-    #properties = pika.BasicProperties(method)
         channel.basic_publish(exchange=exchange, routing_key=method, body=json.dumps(body))
-
-    #channel.basic_publish(exchange=exchange, routing_key='hello', body=json.dumps(body + method), properties=properties) 

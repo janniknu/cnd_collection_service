@@ -1,0 +1,8 @@
+from django.urls import path
+
+from . import views
+urlpatterns=[
+    path('collections/', views.collection_main, name='collection_main'),
+    path('collections/<int:id>/', views.collection_main, name='collection_main'),
+    path('collections/<str:id>/recipe/', views.collection_edit_recipe, name='edit_recipe')
+]
