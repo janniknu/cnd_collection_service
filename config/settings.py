@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.collection_service',
+    'collection_service',
     'apps.notification_service',
 ]
 
