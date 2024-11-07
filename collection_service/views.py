@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Collection, Recipe, User
-from ..rabbitmq_service import publishEvent
+from .rabbitmq_service import publishEvent
 import json
 
 # Create your views here.
