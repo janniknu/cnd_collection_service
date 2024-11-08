@@ -15,9 +15,9 @@ services:
         timeout: 30s
         retries: 5
   
-  cnd:
+  collection-service:
     build: .
-    image: cnd
+    image: collection-service
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
