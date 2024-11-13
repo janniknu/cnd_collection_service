@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Collection, Recipe, User
+from .src.models import Collection, Recipe, User
 
 # Register your models here.
 

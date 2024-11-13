@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Collection, Recipe, User
+from src.models import Collection, Recipe, User
 import json
 
 # Create your tests here.
