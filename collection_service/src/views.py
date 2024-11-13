@@ -7,6 +7,8 @@ import json
 
 # Create your views here.
 
+invalid_json = "Invalid JSON"
+
 @csrf_exempt
 def collection_main(request, id=None):
     if request.method == 'GET':
@@ -48,7 +50,7 @@ def create_collection(request):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return HttpResponseBadRequest(invalid_json)
     author = get_object_or_404(User, username=data['author'])
     
     collection = Collection.objects.create(
@@ -71,7 +73,7 @@ def delete_collection(request, id):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return HttpResponseBadRequest(invalid_json)
     
     collection = get_object_or_404(Collection, id=id)
     author = get_object_or_404(User, username=data['author'])   
@@ -89,7 +91,7 @@ def update_collection(request, id):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return HttpResponseBadRequest(invalid_json)
     
     collection = get_object_or_404(Collection, id=id)
     author = get_object_or_404(User, username=data['author'])   
@@ -114,7 +116,7 @@ def collection_add_recipe(request, id):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return HttpResponseBadRequest(invalid_json)
     
     recipe_id = data.get('recipe_id')
     collection = get_object_or_404(Collection, id=id)
@@ -127,7 +129,7 @@ def collection_remove_recipe(request, id):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return HttpResponseBadRequest(invalid_json)
     
     recipe_id = data.get('recipe_id')
     collection = get_object_or_404(Collection, id=id)
