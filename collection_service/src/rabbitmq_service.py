@@ -6,7 +6,7 @@ rabbitmq_password = os.getenv('RABBITMQ_PASSWORD')
 rabbitmq_host = os.getenv('RABBITMQ_HOST')
 
 credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
-params = pika.ConnectionParameters(host=rabbitmq_host, credentials=credentials)
+params = pika.ConnectionParameters(host=rabbitmq_host, credentials=credentials, heartbeat=20)
 
 connection = pika.BlockingConnection(params)
 #params = pika.URLParameters('amqp://guest:guest@localhost:5672/')
