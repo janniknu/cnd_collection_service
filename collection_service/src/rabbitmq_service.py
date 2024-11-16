@@ -17,11 +17,11 @@ exchange = 'collection_service_exchange'
 channel = connection.channel()
 
 #Nur zum Debuggen
-channel.queue_declare(queue='collection.created')
-channel.queue_declare(queue='collection.updated')
-channel.queue_declare(queue='collection.deleted')
+channel.queue_declare(queue='collection.created', durable=True)
+channel.queue_declare(queue='collection.updated', durable=True)
+channel.queue_declare(queue='collection.deleted', durable=True)
 
-channel.exchange_declare(exchange=exchange, exchange_type='direct')
+channel.exchange_declare(exchange=exchange, exchange_type='direct', durable=True)
 
 #Nur zum Debuggen
 channel.queue_bind(exchange=exchange,queue='collection.created',routing_key='collection.created')
