@@ -29,6 +29,10 @@ channel.queue_bind(exchange=exchange,queue='collection.updated',routing_key='col
 channel.queue_bind(exchange=exchange,queue='collection.deleted',routing_key='collection.deleted')
 
 def publishEvent(method, body):
+        body = {#"id": 3, 
+                "user": "Testuser", #hier irgendwann der eingeloggte User
+                "title": "Testtitel", 
+                "message": "Dies ist eine Testnachricht. Blub"}
         channel.basic_publish(exchange=exchange, routing_key=method, body=json.dumps(body))
         
         
